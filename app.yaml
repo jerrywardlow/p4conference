@@ -6,7 +6,7 @@ threadsafe: yes
 
 handlers:
 
-# static handlers
+# Static handlers listed before dynamic handlers
 
 - url: /favicon\.ico
   static_files: favicon.ico
@@ -26,3 +26,18 @@ handlers:
 
 - url: /partials
   static_dir: static/partials
+
+- url: /
+  static_files: templates/index.html
+  upload: templates/index\.html
+  secure: always
+
+- url: /tasks/send_confirmation_email
+  script: main.app
+
+- url: /crons/set_announcement
+  script: main.app
+
+- url: /_ah/spi/.*
+  script: conference.api
+  secure: always

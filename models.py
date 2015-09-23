@@ -99,7 +99,7 @@ class SessionForms(messages.Message):
     """SessionForms -- multiple Session outbound form message"""
     items = messages.MessageField(SessionForm, 1, repeated=True)
 
-
+# Conference Query
 
 class ConferenceQueryForm(messages.Message):
     """ConferenceQueryForm -- Conference query inbound form message"""
@@ -110,3 +110,23 @@ class ConferenceQueryForm(messages.Message):
 class ConferenceQueryForms(messages.Message):
     """ConferenceQueryForms -- multiple ConferenceQueryForm inbound form message"""
     filters = messages.MessageField(ConferenceQueryForm, 1, repeated=True)
+
+# Tee Shirt Size Enumeration
+
+class TeeShirtSize(messages.Enum):
+    """TeeShirtSize -- t-shirt size enumeration value"""
+    NOT_SPECIFIED = 1
+    XS_M = 2
+    XS_W = 3
+    S_M = 4
+    S_W = 5
+    M_M = 6
+    M_W = 7
+    L_M = 8
+    L_W = 9
+    XL_M = 10
+    XL_W = 11
+    XXL_M = 12
+    XXL_W = 13
+    XXXL_M = 14
+    XXXL_W = 15

@@ -20,10 +20,11 @@ class BooleanMessage(messages.Message):
 
 class Profile(ndb.Model):
     """Profile -- User profile object"""
-    displayName = ndb.StringProperty()
-    mainEmail = ndb.StringProperty()
-    teeShirtSize = ndb.StringProperty(default='NOT_SPECIFIED')
-    conferenceKeysToAttend = ndb.StringProperty(repeated=True)
+    displayName             = ndb.StringProperty()
+    mainEmail               = ndb.StringProperty()
+    teeShirtSize            = ndb.StringProperty(default='NOT_SPECIFIED')
+    conferenceKeysToAttend  = ndb.StringProperty(repeated=True)
+    wishlist                = ndb.StringProperty(repeated=True)
 
 class ProfileMiniForm(messages.Message):
     """ProfileMiniForm -- update Profile form message"""
@@ -32,10 +33,11 @@ class ProfileMiniForm(messages.Message):
 
 class ProfileForm(messages.Message):
     """ProfileForm -- Profile outbound form message"""
-    displayName = messages.StringField(1)
-    mainEmail = messages.StringField(2)
-    teeShirtSize = messages.EnumField('TeeShirtSize', 3)
+    displayName            = messages.StringField(1)
+    mainEmail              = messages.StringField(2)
+    teeShirtSize           = messages.EnumField('TeeShirtSize', 3)
     conferenceKeysToAttend = messages.StringField(4, repeated=True)
+    wishlist               = messages.StringField(5, repeated=True)
 
 # Conference
 

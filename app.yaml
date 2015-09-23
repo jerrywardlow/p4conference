@@ -19,7 +19,7 @@ handlers:
   static_dir: static/img
 
 - url: /css
-  static_dir: static/bottstrap/css
+  static_dir: static/bootstrap/css
 
 - url: /fonts
   static_dir: static/fonts

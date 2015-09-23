@@ -61,9 +61,9 @@ class ConferenceForm(messages.Message):
     city                 = messages.StringField(5)
     startDate            = messages.StringField(6)
     month                = messages.IntegerField(7)
-    endDate              = messages.IntegerField(8)
+    endDate              = messages.StringField(8)
     maxAttendees         = messages.IntegerField(9)
-    seatsAvailable       = messages.StringField(10)
+    seatsAvailable       = messages.IntegerField(10)
     websafeKey           = messages.StringField(11)
     organizerDisplayName = messages.StringField(12)
 
@@ -74,7 +74,7 @@ class ConferenceForms(messages.Message):
 # Session
 
 class Session(ndb.Model):
-    """Session -- session object"""
+    """Session -- Session object"""
     name                 = ndb.StringProperty()
     highlights           = ndb.StringProperty(repeated=True)
     speaker              = ndb.StringProperty()
@@ -85,19 +85,21 @@ class Session(ndb.Model):
     conference           = ndb.KeyProperty(kind='Conference')
 
 class SessionForm(messages.Message):
-    """Session Form -- Session outbound from message"""
+    """Session Form -- Session outbound form message"""
     name                 = messages.StringField(1)
     highlights           = messages.StringField(2, repeated=True)
     speaker              = messages.StringField(3)
     duration             = messages.IntegerField(4)
-    typeOfSession        = messages.EnumField('SessionType', 5)
+    typeOfSession        = messages.StringField(5)
     startDate            = messages.StringField(6)
     startTime            = messages.IntegerField(7)
     websafeKey           = messages.StringField(8)
 
 class SessionForms(messages.Message):
-    """SessionForms -- multiple Sessions outbound form message"""
+    """SessionForms -- multiple Session outbound form message"""
     items = messages.MessageField(SessionForm, 1, repeated=True)
+
+
 
 class ConferenceQueryForm(messages.Message):
     """ConferenceQueryForm -- Conference query inbound form message"""

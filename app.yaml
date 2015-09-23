@@ -41,3 +41,14 @@ handlers:
 - url: /_ah/spi/.*
   script: conference.api
   secure: always
+
+libraries:
+
+- name: webapp2
+  version: latest
+
+- name: endpoints
+  version: latest
+
+- name: pycrypto
+  version: latest

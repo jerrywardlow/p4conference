@@ -512,3 +512,8 @@ class ConferenceApi(remote.Service):
     def unregisterFromConference(self, request):
         """Unregister user for selected conference."""
         return self._conferenceRegistration(request, reg=False)
+
+
+# Registration of API
+
+api = endpoints.api_server([ConferenceApi])

@@ -44,6 +44,8 @@ handlers:
 
 libraries:
 
+# Required libraries for app
+
 - name: webapp2
   version: latest
 

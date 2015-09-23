@@ -1,0 +1,5 @@
+application: UPDATE APPLICATION NAME
+version: 1
+runtime: python 27
+api_version: 1
+threadsafe: yes

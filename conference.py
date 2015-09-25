@@ -328,6 +328,26 @@ class ConferenceApi(remote.Service):
         sf.check_initialized()
         return sf
 
+    def _createSessionObject(self, request):
+        """Create or update Session object, returning SessionForm/request."""
+        # Load user data and check to see if authorized
+        user = endpoints.get_current_user()
+        if not user:
+            raise endpoints.UnauthorizedException('Authorization required')
+        user_id = user.email()
+
+        # Check that Session name exists
+        if not request.name:
+            raise endpoints.BadRequestException("Session 'name' field required")
+        # Check that Session speaker's name exists
+        if not request.speaker:
+            raise endpoints.BadRequestException("Session 'speaker' field required")
+
+        # Copy SessionForm/ProtoRPC message into dictionary
+        data = {field.name: getattr(request, field.name) for field in request.all_fields()}
+        del data['websafeKey']
+
+
 # Profile Objects
 
     def _copyProfileToForm(self, prof):

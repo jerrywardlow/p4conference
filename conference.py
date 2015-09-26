@@ -460,6 +460,14 @@ class ConferenceApi(remote.Service):
         return StringMessage(data=memcache.get(MEMCACHE_ANNOUNCEMENTS_KEY) or "")
 
 
+    @endpoints.method(message_types.VoidMessage, StringMessage,
+            path='conference/announcement/put',
+            http_method='GET', name='putAnnouncement')
+    def putAnnouncement(self, request):
+        """Put Announcement into memcache"""
+        return StringMessage(data=self._cacheAnnouncement())
+
+
 # Registration
 
     @ndb.transactional(xg=True)

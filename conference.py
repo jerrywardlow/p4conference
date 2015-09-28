@@ -76,6 +76,12 @@ SESSION_POST_REQUEST = endpoints.ResourceContainer(
     SessionForm,
     websafeConferenceKey=messages.StringField(1),
 )
+
+SESSION_TYPE_GET_REQUEST = endpoints.ResourceContainer(
+    message_types.VoidMessage,
+    websafeConferenceKey=messages.StringField(1),
+    sessionType=messages.StringField(2),
+)
 # Conference API Class Definition
 
 @endpoints.api(name='conference',
@@ -381,6 +387,11 @@ class ConferenceApi(remote.Service):
             return SessionForms(items=[])
         return SessionForms(items=[self._copySessionToForm(session) for session in sessions])
 
+    @endpoints.method(SESSION_TYPE_GET_REQUEST,
+                      SessionsForms,
+                      path='sessions/{websafeConferenceKey}',
+                      http_method='GET',
+                      name='getConferenceSessions')
     def getConferenceSessionsByType(self, request):
         pass
 

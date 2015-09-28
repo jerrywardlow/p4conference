@@ -355,6 +355,19 @@ class ConferenceApi(remote.Service):
         # Copy SessionForm/ProtoRPC message into dictionary
         data = {field.name: getattr(request, field.name) for field in request.all_fields()}
 
+    def _get_conference_sessions(self, websafe_key):
+        """Return all Sessions within a Conference from websafeConferenceKey"""
+        # Retrieve ndbKey from our websafe_key
+        ndbKey = ndb.Key(urlsafe=websafe_key)
+        # Raise exception if the websafe_key is invalid
+        if not ndbKey:
+            raise endpoints.NotFoundException('No conference with key: %s' % websafe_key)
+        # Retrieve Conference object using ndbKey
+        conf = ndbKey.get()
+        if not conf:
+            raise endpoints.NotFoundException('No conference with key: %s' % websafe_key)
+        return Session.query(Session.conference == ndbKey)
+
 
     @endpoints.method(SESSION_GET_REQUEST,
                       SessionsForms,
@@ -363,7 +376,10 @@ class ConferenceApi(remote.Service):
                       name='getConferenceSessions')
     def getConferenceSessions(self, request):
         """Given a Conference, return all sessions"""
-        sessions =
+        sessions = self._get_conference_sessions(request.websafeConferenceKey).fetch()
+        if not sessions:
+            return SessionForms(items=[])
+        return SessionForms(items=[self._copySessionToForm(session) for session in sessions])
 
     def getConferenceSessionsByType(self, request):
         pass

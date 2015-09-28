@@ -343,8 +343,12 @@ class ConferenceApi(remote.Service):
                     setattr(sf, field.name, str(getattr(session, field.name)))
                 else:
                     setattr(sf, field.name, getattr(session, field.name))
-            elif field.name == 'websafeKey':
-                setattr(sf, field.name, session.key.urlsafe())
+        if type(session) is Session:
+            # If dealing with a Session object
+            setattr(sf, 'sessionKey', str(session.key.urlsafe()))
+        else:
+            # If dealing with a request
+            setattr(sf, 'sessionKey', str(session.sessionKey))
         sf.check_initialized()
         return sf
 

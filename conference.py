@@ -354,12 +354,16 @@ class ConferenceApi(remote.Service):
 
         # Copy SessionForm/ProtoRPC message into dictionary
         data = {field.name: getattr(request, field.name) for field in request.all_fields()}
-        del data['websafeKey']
+
 
     @endpoints.method(SESSION_GET_REQUEST,
-                      )
+                      SessionsForms,
+                      path='sessions/{websafeConferenceKey}',
+                      http_method='GET',
+                      name='getConferenceSessions')
     def getConferenceSessions(self, request):
-        pass
+        """Given a Conference, return all sessions"""
+        sessions =
 
     def getConferenceSessionsByType(self, request):
         pass
@@ -499,7 +503,7 @@ class ConferenceApi(remote.Service):
         retval = None
         prof = self._getProfileFromUser() # get user Profile
 
-        # check if conf exists given websafeConfKey
+        # check if conf exists given websafeConferenceKey
         # get conference; check that it exists
         wsck = request.websafeConferenceKey
         conf = ndb.Key(urlsafe=wsck).get()

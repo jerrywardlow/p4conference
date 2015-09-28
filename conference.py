@@ -428,7 +428,19 @@ class ConferenceApi(remote.Service):
                       http_method='POST',
                       name='createSession')
     def createSession(self, request):
-        pass
+        """Create new Session in a Conference"""
+        # Check to see that User is authorized
+        user = endpoints.get_current_user()
+        if not user:
+            raise endpoints.UnauthorizedException('Authorization is Required')
+
+        # Check that our User is also the organizer of the Conference
+        user_id = _getUserId()
+        conf = ndb.Key(urlsafe=request.websafeConferenceKey).get()
+        if user_id != conf.organizerUserId:
+            raise endpoints.ForbiddenException("Only Conference owner can create a new Session.")
+
+        return self._createSessionObject(request)
 
 
 # Profile Objects

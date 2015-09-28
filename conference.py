@@ -82,6 +82,11 @@ SESSION_TYPE_GET_REQUEST = endpoints.ResourceContainer(
     websafeConferenceKey=messages.StringField(1),
     sessionType=messages.StringField(2),
 )
+
+SESSION_SPEAKER_GET_REQUEST = endpoints.ResourceContainer(
+    message_types.VoidMessage,
+    speakerName=messages.StringField(2),
+)
 # Conference API Class Definition
 
 @endpoints.api(name='conference',
@@ -343,6 +348,7 @@ class ConferenceApi(remote.Service):
         sf.check_initialized()
         return sf
 
+
     def _createSessionObject(self, request):
         """Create or update Session object, returning SessionForm/request."""
         # Load user data and check to see if authorized
@@ -361,6 +367,7 @@ class ConferenceApi(remote.Service):
         # Copy SessionForm/ProtoRPC message into dictionary
         data = {field.name: getattr(request, field.name) for field in request.all_fields()}
 
+
     def _get_conference_sessions(self, websafe_key):
         """Return all Sessions within a Conference from websafeConferenceKey"""
         # Retrieve ndbKey from our websafe_key
@@ -376,7 +383,7 @@ class ConferenceApi(remote.Service):
 
 
     @endpoints.method(SESSION_GET_REQUEST,
-                      SessionsForms,
+                      SessionForms,
                       path='sessions/{websafeConferenceKey}',
                       http_method='GET',
                       name='getConferenceSessions')
@@ -387,17 +394,39 @@ class ConferenceApi(remote.Service):
             return SessionForms(items=[])
         return SessionForms(items=[self._copySessionToForm(session) for session in sessions])
 
+
     @endpoints.method(SESSION_TYPE_GET_REQUEST,
-                      SessionsForms,
-                      path='sessions/{websafeConferenceKey}',
+                      SessionForms,
+                      path='sessions/{websafeConferenceKey}/type/{sessionType}',
                       http_method='GET',
-                      name='getConferenceSessions')
+                      name='getConferenceSessionsByType')
     def getConferenceSessionsByType(self, request):
-        pass
+        """Return all Sessions of a certain typeOfSession from a specific Conference"""
+        sessions = self._get_sessions_in_a_conference(request.websafeConferenceKey).filter(Session.typeOfSession == request.sessionType).fetch()
+        if not sessions:
+            raise endpoints.NotFoundException("No Session of that sessionType found: %s" %request.sessionType)
 
+        return SessionsForms(items=[self._copySessionToForm(session) for session in sessions])
+
+
+    @endpoints.method(SESSION_SPEAKER_GET_REQUEST,
+                      SessionForms,
+                      path='sessions/speaker/{speakerName}',
+                      http_method='GET',
+                      name='getSessionsBySpeaker')
     def getSessionsBySpeaker(self, request):
-        pass
+        """Return all Sessions by a given speaker"""
+        sessions = Session.get_sessions_by_speaker(request.speakerName).fetch()
+        if not sessions:
+            raise endpoints.NotFoundException("No sessions found for Speaker: %s" % request.speakerName)
+        return SessionsForms(items=[self._copySessionToForm(session) for session in sessions])
 
+
+    @endpoints.method(SESSION_POST_REQUEST,
+                      SessionForm,
+                      path='sessions/create/{websafeConferenceKey}',
+                      http_method='POST',
+                      name='createSession')
     def createSession(self, request):
         pass
 

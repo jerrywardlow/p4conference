@@ -366,7 +366,23 @@ class ConferenceApi(remote.Service):
 
         # Copy SessionForm/ProtoRPC message into dictionary
         data = {field.name: getattr(request, field.name) for field in request.all_fields()}
+        data['conference'] = ndb.Key(urlsafe=request.websafeConferenceKey)
+        del data['websafeConferenceKey']
+        del data['sessionKey']
 
+        # Convert date from string to date object
+        if data['startDate']:
+            data['startDate'] = datetime.strptime(data['startDate'][:10], "%Y-%m-%d").date()
+
+        # Create Session
+        new_key = Session(**data).put()
+
+        taskqueue.add(params={'conferenceKey': request.websafeConferenceKey,
+                              'speaker': data['speaker']},
+                      url='/tasks/get_featured_speaker')
+
+        request.sessionKey = new_key.urlsafe()
+        return self._copySessionToForm(request)
 
     def _get_conference_sessions(self, websafe_key):
         """Return all Sessions within a Conference from websafeConferenceKey"""
@@ -416,7 +432,7 @@ class ConferenceApi(remote.Service):
                       name='getSessionsBySpeaker')
     def getSessionsBySpeaker(self, request):
         """Return all Sessions by a given speaker"""
-        sessions = Session.get_sessions_by_speaker(request.speakerName).fetch()
+        sessions = Session.query(Session.speakerName == request.speakerName).fetch()
         if not sessions:
             raise endpoints.NotFoundException("No sessions found for Speaker: %s" % request.speakerName)
         return SessionsForms(items=[self._copySessionToForm(session) for session in sessions])

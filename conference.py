@@ -455,7 +455,7 @@ class ConferenceApi(remote.Service):
             raise endpoints.UnauthorizedException('Authorization is Required')
 
         # Check that our User is also the organizer of the Conference
-        user_id = _getUserId()
+        user_id = user.email()
         conf = ndb.Key(urlsafe=request.websafeConferenceKey).get()
         if user_id != conf.organizerUserId:
             raise endpoints.ForbiddenException("Only Conference owner can create a new Session.")

@@ -347,6 +347,18 @@ class ConferenceApi(remote.Service):
         data = {field.name: getattr(request, field.name) for field in request.all_fields()}
         del data['websafeKey']
 
+    def getConferenceSessions(self, request):
+        pass
+
+    def getConferenceSessionsByType(self, request):
+        pass
+
+    def getSessionsBySpeaker(self, request):
+        pass
+
+    def createSession(self, request):
+        pass
+
 
 # Profile Objects
 

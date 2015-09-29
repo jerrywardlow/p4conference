@@ -28,7 +28,7 @@ from models import TeeShirtSize
 
 # Global Constants and Defaults
 
-WEB_CLIENT_ID = '802802011548-peksmkor2td7ccf5s56r09l5jei2gu20.apps.googleusercontent.com'
+WEB_CLIENT_ID = 'YOUR CLIENT ID GOES HERE'
 
 MEMCACHE_ANNOUNCEMENTS_KEY = "RECENT_ANNOUNCEMENTS"
 ANNOUNCEMENT_TPL = ('Last chance to attend! The following conferences '
@@ -86,6 +86,11 @@ SESSION_TYPE_GET_REQUEST = endpoints.ResourceContainer(
 SESSION_SPEAKER_GET_REQUEST = endpoints.ResourceContainer(
     message_types.VoidMessage,
     speakerName=messages.StringField(2),
+)
+
+SESSION_WISHLIST_POST_REQUEST = endpoints.ResourceContainer(
+    message_types.VoidMessage,
+    websafeSessionKey=messages.StringField(1),
 )
 # Conference API Class Definition
 
@@ -422,7 +427,7 @@ class ConferenceApi(remote.Service):
                       name='getConferenceSessionsByType')
     def getConferenceSessionsByType(self, request):
         """Return all Sessions of a certain typeOfSession from a specific Conference"""
-        sessions = self._get_sessions_in_a_conference(request.websafeConferenceKey).filter(Session.typeOfSession == request.sessionType).fetch()
+        sessions = self._get_conference_sessions(request.websafeConferenceKey).filter(Session.typeOfSession == request.sessionType).fetch()
         if not sessions:
             raise endpoints.NotFoundException("No Session of that sessionType found: %s" %request.sessionType)
 
@@ -538,6 +543,38 @@ class ConferenceApi(remote.Service):
     def saveProfile(self, request):
         """Update & return user profile."""
         return self._doProfile(request)
+
+
+# Wishlist
+    @endpoints.method(SESSION_WISHLIST_POST_REQUEST,
+                      BooleanMessage,
+                      path='wishlist/add/{websafeSessionKey}',
+                      http_method='POST',
+                      name='addSessionToWishlist')
+    def addSessionToWishlist(self, request):
+        """Add a Session to a User's Wishlist"""
+        # First check to see if User is authorized
+        user = endpoints.get_current_user()
+        if not user:
+            raise endpoints.UnauthorizedException('Authorization Required')
+
+        # Now we retrieve our User's Profile
+        prof = self._getProfileFromUser()
+
+        # Finally we add the Session to our User's sessionWishlist
+        sessionKey = request.websafeSessionKey
+        if sessionKey not in prof.sessionWishlist:
+            prof.sessionWishlist.append(sessionKey)
+            prof.put()
+        else:
+            # Raise an exception if we have already added the Session
+            raise endpoints.ConflictException('Session is already in Wishlist')
+
+        return BooleanMessage(data=True)
+
+
+    def getSessionsInWishlist(self, request):
+        pass
 
 
 # Announcements

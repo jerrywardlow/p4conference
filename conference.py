@@ -572,9 +572,26 @@ class ConferenceApi(remote.Service):
 
         return BooleanMessage(data=True)
 
-
+    @endpoints.method(message_types.VoidMessage,
+                      SessionForms,
+                      path='wishlist/get',
+                      http_method='GET',
+                      name='getSessionsInWishlist')
     def getSessionsInWishlist(self, request):
-        pass
+        """Retrieve the Session's in a User's Wishlist"""
+        # First check to see if User is authorized
+        user = endpoints.get_current_user()
+        if not user:
+            raise endpoints.UnauthorizedException('Authorization Required')
+
+        # Retrieve our User Profile
+        prof = self._getProfileFromUser()
+
+        # Get the Wishlist from the User Profile
+        sessions = prof.sessionWishlist
+
+        # Return the Sessions from the Wishlist
+        return SessionForms(items=[self._copySessionToForm(ndb.Key(urlsafe=session).get()) for session in sessions])
 
 
 # Announcements

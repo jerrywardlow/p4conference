@@ -611,9 +611,9 @@ class ConferenceApi(remote.Service):
         if not conf:
             raise endpoints.NotFoundException('No conference found with key: %s' % wsck)
 
-        sessions = Session.query(Session.speaker == request.speakerName).fetch()
+        sessions = Session.query(Session.speaker == speakerName).fetch()
         if len(sessions) > 1:
-            features = FEATURED_SPEAKER_TPL % (speaker,', '.join([s.name for s in sessions]))
+            features = FEATURED_SPEAKER_TPL % (speakerName,', '.join([s.name for s in sessions]))
             memcache.set(MEMCACHE_FEATURED_SPEAKER, features)
 
 

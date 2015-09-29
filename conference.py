@@ -29,6 +29,9 @@ from models import TeeShirtSize
 # Global Constants and Defaults
 
 WEB_CLIENT_ID = 'YOUR CLIENT ID GOES HERE'
+ANDROID_CLIENT_ID = ''
+IOS_CLIENT_ID = ''
+ANDROID_AUDIENCE = WEB_CLIENT_ID
 
 MEMCACHE_ANNOUNCEMENTS_KEY = "RECENT_ANNOUNCEMENTS"
 ANNOUNCEMENT_TPL = ('Last chance to attend! The following conferences '

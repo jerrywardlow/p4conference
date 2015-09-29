@@ -34,6 +34,10 @@ MEMCACHE_ANNOUNCEMENTS_KEY = "RECENT_ANNOUNCEMENTS"
 ANNOUNCEMENT_TPL = ('Last chance to attend! The following conferences '
                     'are nearly sold out: %s')
 
+MEMCACHE_FEATURED_SPEAKER = "RECENT_SESSION_ANNOUNCEMENTS"
+FEATURED_SPEAKER_TPL = ('Join Featured Speaker %s at these upcoming sessions: %s')
+
+
 DEFAULTS = {
     "city": "Default City",
     "maxAttendees": 0,
@@ -594,6 +598,33 @@ class ConferenceApi(remote.Service):
         return SessionForms(items=[self._copySessionToForm(ndb.Key(urlsafe=session).get()) for session in sessions])
 
 
+# Featured Speaker
+
+    # Get announcment for feature session
+    @staticmethod
+    def _cacheFeatureSessions(speakerName, wsck):
+        """
+        Checks if Speaker has more than one Session at Conference, and adds
+        memcache entry with Speaker and Session names if so.
+        """
+        conf = ndb.Key(urlsafe=wsck).get()
+        if not conf:
+            raise endpoints.NotFoundException('No conference found with key: %s' % wsck)
+
+        sessions = Session.query(Session.speaker == request.speakerName).fetch()
+        if len(sessions) > 1:
+            features = FEATURED_SPEAKER_TPL % (speaker,', '.join([s.name for s in sessions]))
+            memcache.set(MEMCACHE_FEATURED_SPEAKER, features)
+
+
+    @endpoints.method(message_types.VoidMessage,
+                      StringMessage,
+                      path='session/announcement/get',
+                      http_method='GET',
+                      name='getFeaturedSpeaker')
+    def getFeaturedSpeaker(self, request):
+        """Return Announcement from Memcache."""
+        return StringMessage(data=memcache.get(MEMCACHE_FEATURED_SPEAKER) or "")
 # Announcements
 
     @staticmethod

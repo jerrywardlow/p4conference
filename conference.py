@@ -28,7 +28,7 @@ from models import TeeShirtSize
 
 # Global Constants and Defaults
 
-WEB_CLIENT_ID = 'YOUR CLIENT ID GOES HERE'
+WEB_CLIENT_ID = '802802011548-peksmkor2td7ccf5s56r09l5jei2gu20.apps.googleusercontent.com'
 
 MEMCACHE_ANNOUNCEMENTS_KEY = "RECENT_ANNOUNCEMENTS"
 ANNOUNCEMENT_TPL = ('Last chance to attend! The following conferences '
@@ -436,7 +436,7 @@ class ConferenceApi(remote.Service):
                       name='getSessionsBySpeaker')
     def getSessionsBySpeaker(self, request):
         """Return all Sessions by a given speaker"""
-        sessions = Session.query(Session.speakerName == request.speakerName).fetch()
+        sessions = Session.query(Session.speaker == request.speakerName).fetch()
         if not sessions:
             raise endpoints.NotFoundException("No sessions found for Speaker: %s" % request.speakerName)
         return SessionsForms(items=[self._copySessionToForm(session) for session in sessions])

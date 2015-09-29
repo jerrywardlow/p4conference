@@ -426,7 +426,7 @@ class ConferenceApi(remote.Service):
         if not sessions:
             raise endpoints.NotFoundException("No Session of that sessionType found: %s" %request.sessionType)
 
-        return SessionsForms(items=[self._copySessionToForm(session) for session in sessions])
+        return SessionForms(items=[self._copySessionToForm(session) for session in sessions])
 
 
     @endpoints.method(SESSION_SPEAKER_GET_REQUEST,
@@ -439,7 +439,7 @@ class ConferenceApi(remote.Service):
         sessions = Session.query(Session.speaker == request.speakerName).fetch()
         if not sessions:
             raise endpoints.NotFoundException("No sessions found for Speaker: %s" % request.speakerName)
-        return SessionsForms(items=[self._copySessionToForm(session) for session in sessions])
+        return SessionForms(items=[self._copySessionToForm(session) for session in sessions])
 
 
     @endpoints.method(SESSION_POST_REQUEST,

@@ -26,12 +26,14 @@ from models import ConferenceQueryForm
 from models import ConferenceQueryForms
 from models import TeeShirtSize
 
-# Global Constants and Defaults
+# Client ID's
 
 WEB_CLIENT_ID = 'YOUR CLIENT ID GOES HERE'
 ANDROID_CLIENT_ID = ''
 IOS_CLIENT_ID = ''
 ANDROID_AUDIENCE = WEB_CLIENT_ID
+
+# Memcahce Constants
 
 MEMCACHE_ANNOUNCEMENTS_KEY = "RECENT_ANNOUNCEMENTS"
 ANNOUNCEMENT_TPL = ('Last chance to attend! The following conferences '
@@ -40,6 +42,7 @@ ANNOUNCEMENT_TPL = ('Last chance to attend! The following conferences '
 MEMCACHE_FEATURED_SPEAKER = "RECENT_SESSION_ANNOUNCEMENTS"
 FEATURED_SPEAKER_TPL = ('Join Featured Speaker %s at these upcoming sessions: %s')
 
+# Global Constants Pulled From Udacity - UD858
 
 DEFAULTS = {
     "city": "Default City",
@@ -63,6 +66,8 @@ FIELDS =    {
             'MONTH': 'month',
             'MAX_ATTENDEES': 'maxAttendees',
             }
+
+# GET and POST requests
 
 CONF_GET_REQUEST = endpoints.ResourceContainer(
     message_types.VoidMessage,
@@ -110,6 +115,7 @@ SESSION_WISHLIST_POST_REQUEST = endpoints.ResourceContainer(
     message_types.VoidMessage,
     websafeSessionKey=messages.StringField(1),
 )
+
 # Conference API Class Definition
 
 @endpoints.api(name='conference',
@@ -193,6 +199,7 @@ class ConferenceApi(remote.Service):
 
     @ndb.transactional()
     def _updateConferenceObject(self, request):
+        """Update an existing Conference Object"""
         user = endpoints.get_current_user()
         if not user:
             raise endpoints.UnauthorizedException('Authorization required')
@@ -339,8 +346,8 @@ class ConferenceApi(remote.Service):
 
         # need to fetch organiser displayName from profiles
         # get all keys and use get_multi for speed
-        organisers = [(ndb.Key(Profile, conf.organizerUserId)) for conf in conferences]
-        profiles = ndb.get_multi(organisers)
+        organizers = [(ndb.Key(Profile, conf.organizerUserId)) for conf in conferences]
+        profiles = ndb.get_multi(organizers)
 
         # put display names in a dict for easier fetching
         names = {}
@@ -666,6 +673,8 @@ class ConferenceApi(remote.Service):
     def getFeaturedSpeaker(self, request):
         """Return Announcement from Memcache."""
         return StringMessage(data=memcache.get(MEMCACHE_FEATURED_SPEAKER) or "")
+
+
 # Announcements
 
     @staticmethod

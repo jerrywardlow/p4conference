@@ -90,6 +90,12 @@ SESSION_TYPE_GET_REQUEST = endpoints.ResourceContainer(
     sessionType=messages.StringField(2),
 )
 
+SESSION_HIGHLIGHT_GET_REQUEST = endpoints.ResourceContainer(
+    message_types.VoidMessage,
+    websafeConferenceKey=messages.StringField(1),
+    highlight=messages.StringField(2),
+)
+
 SESSION_SPEAKER_GET_REQUEST = endpoints.ResourceContainer(
     message_types.VoidMessage,
     speakerName=messages.StringField(2),
@@ -451,6 +457,20 @@ class ConferenceApi(remote.Service):
         sessions = Session.query(Session.speaker == request.speakerName).fetch()
         if not sessions:
             raise endpoints.NotFoundException("No sessions found for Speaker: %s" % request.speakerName)
+        return SessionForms(items=[self._copySessionToForm(session) for session in sessions])
+
+
+    @endpoints.method(SESSION_HIGHLIGHT_GET_REQUEST,
+                      SessionForms,
+                      path='sessions/{websafeConferenceKey}/highlight/{highlight}',
+                      http_method='GET',
+                      name='getSessionsByHighlight')
+    def getSessionsByHighlight(self, request):
+        """Return all Sessions with a certain Highlight from a specific Conference"""
+        sessions = self._get_conference_sessions(request.websafeConferenceKey).filter(Session.highlights == request.highlight).fetch()
+        if not sessions:
+            raise endpoints.NotFoundException("No Session with that highlight found: %s" %request.highlight)
+
         return SessionForms(items=[self._copySessionToForm(session) for session in sessions])
 
 

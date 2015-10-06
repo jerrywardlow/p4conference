@@ -103,7 +103,7 @@ SESSION_START_GET_REQUEST = endpoints.ResourceContainer(
 
 SESSION_SPEAKER_GET_REQUEST = endpoints.ResourceContainer(
     message_types.VoidMessage,
-    speakerName=messages.StringField(2),
+    speakerName=messages.StringField(1),
 )
 
 SESSION_WISHLIST_POST_REQUEST = endpoints.ResourceContainer(

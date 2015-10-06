@@ -96,6 +96,11 @@ SESSION_HIGHLIGHT_GET_REQUEST = endpoints.ResourceContainer(
     highlight=messages.StringField(2),
 )
 
+SESSION_START_GET_REQUEST = endpoints.ResourceContainer(
+    message_types.VoidMessage,
+    startTime=messages.IntegerField(1),
+)
+
 SESSION_SPEAKER_GET_REQUEST = endpoints.ResourceContainer(
     message_types.VoidMessage,
     speakerName=messages.StringField(2),
@@ -444,6 +449,19 @@ class ConferenceApi(remote.Service):
         if not sessions:
             raise endpoints.NotFoundException("No Session of that sessionType found: %s" %request.sessionType)
 
+        return SessionForms(items=[self._copySessionToForm(session) for session in sessions])
+
+
+    @endpoints.method(SESSION_START_GET_REQUEST,
+                      SessionForms,
+                      path='sessions/time/{startTime}',
+                      http_method='GET',
+                      name='getSessionsByStartTime')
+    def getSessionsByStartTime(self, request):
+        """Return all Sessions with a specific Start Time"""
+        sessions = Session.query(Session.startTime == request.startTime).fetch()
+        if not sessions:
+            raise endpoints.NotFoundException("No sessions found with that Start Time: %s" % request.startTime)
         return SessionForms(items=[self._copySessionToForm(session) for session in sessions])
 
 

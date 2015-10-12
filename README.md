@@ -52,3 +52,54 @@ the application name is updated in `app.yaml`, line 1, `application:`.
 
 Now that our project is updated, we can run it locally using the App Engine SDK
 or deploy it to the Cloud Platform.
+
+### Design Tasks
+
+**Task 1: Add Sessions to a Conference**
+
+As outlined in the project guidelines, the following four endpoint methods were defined:
+
+* `getConferenceSessions`: Given a conference, return all sessions
+* `getConferenceSessionsByType`: Given a conference, return all sessions of a specified type
+* `getSessionsBySpeaker`: Return all sessions by a given speaker, across all conferences.
+* `createSession`: Creates a new session in a conference (only open to organizer of said conference.)
+
+The `Session` model was created with the same basic structure as `Conference` with the following attributes:
+
+**Property** | **Type**
+- | -
+name | String
+highlights | String
+speaker | String
+duration | Integer
+typeOfSession | String
+startDate | Date
+startTime | Integer
+conference | Key (Kind: Conference)
+
+Sessions are linked to a Conference using it's datastore key, stored in the `conference` attribute and created with the `createSession` endpoint using the
+`websafeConferenceKey`. Before creation of a new Session, the User is checked for authorization and then to see if they match the `organizerUserId` of the specified Conference. This will isolate creation of new Session's to only the organizer of the original Conference.
+
+Speaker is implemented as a plain string field within the Session model for
+simplicity. By not tying the Speaker to a User, we are granted more flexibility
+by not requiring a Conference organizer to verify that the Speaker has an account,
+requiring creation of one if not.
+
+Session highlights are modeled as a repeatable string field which allows a Session
+to have more than one focus and allow for more information to be represented.
+
+Session `startTime` is represented by an integer in 24 hour format to allow for
+ease of sorting.
+
+**Task 2: Add Sessions to User Wishlist**
+
+To store a wishlist of sessions in a Users profile, the `Profile` model was
+modified to add a property `sessionWishlist`. This is a repeated string field which
+stores the `websafeSessionKey` of each Session the User wishes to add. Adding
+to and retrieving from the wishlist is accomplished with the introduction of two
+new endpoint methods:
+
+* `addSessionToWishlist`: adds Session to User's wishlist using `websafeSessionKey`
+* `getSessionsInWishlist`: returns the Session's which have been stored in a User's wishlist
+
+**Task 3: Indexes and Queries**

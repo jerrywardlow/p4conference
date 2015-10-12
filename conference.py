@@ -411,6 +411,7 @@ class ConferenceApi(remote.Service):
         # Create Session
         new_key = Session(**data).put()
 
+        # Add get_featured_speaker to task queue
         taskqueue.add(params={'conferenceKey': request.websafeConferenceKey,
                               'speaker': data['speaker']},
                       url='/tasks/get_featured_speaker')

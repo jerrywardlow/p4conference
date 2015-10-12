@@ -47,7 +47,7 @@ After creating a new project through the Google Developers Console, we can
 add new 'OAuth 2.0 client ID' credentials. Our application type is a 'Web
 application'. 'Authorized JavaScript origins' are `http://localhost:8080` and
 'Authorized redirect URIs' are `http://localhost:8080/oauth2callback`. We can now
-use the generated Client ID to update `main.py` at line 31, `WEB_CLIENT_ID`. This
+use the generated Client ID to update `conference.py` at line 31, `WEB_CLIENT_ID`. This
 Client ID is also updated in `/static/js/app.js` at line 89, `CLIENT_ID`. Finally,
 the application name is updated in `app.yaml`, line 1, `application:`.
 

@@ -103,3 +103,29 @@ new endpoint methods:
 * `getSessionsInWishlist`: returns the Session's which have been stored in a User's wishlist
 
 **Task 3: Indexes and Queries**
+
+Two additional endpoint methods for queries were added.
+
+* `getSessionsByHighlight`: Returns all sessions with a matching highlight
+attribute. This allows a quick and concise way for a user or conference organizer
+to quickly find out what sessions match a specific highlight. This will allow
+a simple method to discover sessions which are similar to ones in a users
+wishlist, or to find if a conference is becoming over-saturated with a certain
+highlight ('Free Donuts For Showing Up!').
+* `getSessionsByStartTime`: Returns sessions which start at a specific time. This
+allows for discovery of scheduling conflicts or to find sessions to fill a gap in
+a users daily schedule. An automated process can use this endpoint to automatically
+notify a conference organizer if too many sessions are planned at one time, or to
+notify a user of other sessions at the same time as a canceled session.
+
+For the complex query problem (finding non-workshop sessions before 7pm), NDB
+queries are not allowed more than one inequality filter. Executing a query as
+described would result in a `BadRequestError` with no result. To work around this
+limitation, a primary query of sessions before 7pm can be issued and returned.
+This result can be post-processed in Python to eliminate any entries which feature
+a `typeOfSession` of 'workshop', leaving us with only those sessions before 7pm
+that are not workshops. This unfortunate limitation of Datastore can easily be
+countered with Python, though we are still forced to work with a potentially
+large data set returned by the query. Carefully considering the response when
+constructing our query to minimize the returned set before post-processing is a
+necessity in these cases..

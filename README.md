@@ -68,7 +68,7 @@ As outlined in the project guidelines, the following four endpoint methods were 
 The `Session` model was created with the same basic structure as `Conference` with the following attributes:
 
 **Property** | **Type**
-- | -
+---- | -----
 name | String
 highlights | String
 speaker | String

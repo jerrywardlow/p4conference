@@ -129,3 +129,13 @@ countered with Python, though we are still forced to work with a potentially
 large data set returned by the query. Carefully considering the response when
 constructing our query to minimize the returned set before post-processing is a
 necessity in these cases..
+
+
+**Task 4: Add a Task**
+
+Implementing the "Featured Speaker" functionality was accomplished through the
+definition of a new endpoint `getFeaturedSpeaker` as well as modifcation of the
+`createSession` endpoint. During the creation of a new session, a check is made
+on the speaker to see if their number of sessions is greater than one, per project
+guidelines. If so, a new memcache entry is made which contains the name of the
+speaker as well as the names of all sessions they are associated with.
